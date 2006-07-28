@@ -1,6 +1,6 @@
 " File: highlight.vim
 " Author: Amit Sethi <amitrajsethi@yahoo.com>
-" Version: 1.0
+" Version: 1.1
 " Last Modified: Wed Jul  5 12:13:51 IST 2006
 " Description: Highlight lines or patterns of interest in different colors
 " Uasge:
@@ -128,10 +128,9 @@ function! <SID>Highlight(mode)
    elseif a:mode == 'f' || a:mode == 's'
       let s:pcolor_n = s:pcolor_n == s:pcolor_max - 1 ?  1 : s:pcolor_n + 1
       exec 'syn match ' . s:pcolor_grp . s:pcolor_n . ' "' . cur_word . '" containedin=ALL'
-      exec 'syn keyword ' . s:pcolor_grp . s:pcolor_n . ' ' . cur_word
    elseif a:mode == 'w'
       let s:pcolor_n = s:pcolor_n == s:pcolor_max - 1 ?  1 : s:pcolor_n + 1
-      exec 'syn keyword ' . s:pcolor_grp . s:pcolor_n . ' ' . cur_word
+      exec 'syn match ' . s:pcolor_grp . s:pcolor_n . ' "\<' . cur_word . '\>" containedin=ALL'
    elseif a:mode == 'd'
       exec 'syn clear ' . s:pcolor_grp . s:pcolor_n
       let s:pcolor_n = s:pcolor_n == 0 ? 0 : s:pcolor_n - 1
