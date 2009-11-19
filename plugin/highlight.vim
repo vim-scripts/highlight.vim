@@ -1,7 +1,7 @@
 " File: highlight.vim
 " Author: Amit Sethi <amitrajsethi@yahoo.com>
-" Version: 1.1
-" Last Modified: Wed Jul  5 12:13:51 IST 2006
+" Version: 1.4
+" Last Modified: Wed Dec  3 12:57:57 IST 2008
 " Description: Highlight lines or patterns of interest in different colors
 " Uasge:
 "   Line mode
@@ -10,8 +10,10 @@
 "     <C-h><C-r>   Clear last line highlight
 "
 "   Pattern mode
-"     <C-h><C-w>   Highlight all lines having word under cursor (whole word match)
-"     <C-h><C-f>   Highlight all lines having word under cursor (partial word match)
+"     <C-h><C-w>   Highlight word under cursor (whole word match)
+"     <C-h><C-l>   Highlight all lines having word under cursor (whole word match)
+"     <C-h><C-f>   Highlight word under cursor (partial word match)
+"     <C-h><C-k>   Highlight all lines having word under cursor (partial word match)
 "     <C-h><C-s>   Highlight last search pattern
 "     <C-h><C-d>   Clear last pattern highlight
 "
@@ -33,7 +35,7 @@
 " Limitation:
 "   If you are using syntax highlighting based on keywords (e.g. language
 "   specific keyword highlighting), then while highlighting lines, if the
-"   line starts with a keyword, then that keyword is not highlighted,
+"   line starts with a keyword, then sometimes that keyword is not highlighted,
 "   while the rest of the line is hightlighted normally.
 "
 
@@ -47,18 +49,22 @@ syntax on
 " -- Normal mode mappings --
 
 " Highlight current line 
-noremap  <silent> <C-h><C-h> :call <SID>Highlight("h")<CR>
+noremap  <silent> <C-h><C-h> :call <SID>Highlight("h") \| nohls<CR>
 " Advance color for next line highlight
 noremap  <silent> <C-h><C-a> :call <SID>Highlight("a")<CR>
 " Clear last line highlight
 noremap  <silent> <C-h><C-r> :call <SID>Highlight("r")<CR>
 
+" Highlight word under cursor (whole word match)
+noremap  <silent> <C-h><C-w> :call <SID>Highlight("w") \| nohls<CR>
 " Highlight all lines having word under cursor (whole word match)
-noremap  <silent> <C-h><C-w> :call <SID>Highlight("w")<CR>
+noremap  <silent> <C-h><C-l> :call <SID>Highlight("l") \| nohls<CR>
+" Highlight word under cursor (partial word match)
+noremap  <silent> <C-h><C-f> :call <SID>Highlight("f") \| nohls<CR>
 " Highlight all lines having word under cursor (partial word match)
-noremap  <silent> <C-h><C-f> :call <SID>Highlight("f")<CR>
+noremap  <silent> <C-h><C-k> :call <SID>Highlight("k") \| nohls<CR>
 " Highlight last search pattern
-noremap  <silent> <C-h><C-s> :call <SID>Highlight("s")<CR>
+noremap  <silent> <C-h><C-s> :call <SID>Highlight("s") \| nohls<CR>
 " Clear last pattern highlight
 noremap  <silent> <C-h><C-d> :call <SID>Highlight("d")<CR>
 
@@ -75,12 +81,16 @@ inoremap <silent> <C-h><C-a> <C-o>:call <SID>Highlight("a")<CR>
 " Clear last line highlight
 inoremap <silent> <C-h><C-r> <C-o>:call <SID>Highlight("r")<CR>
 
+" Highlight word under cursor (whole word match)
+inoremap <silent> <C-h><C-w> <C-o>:call <SID>Highlight("w") \| nohls<CR>
 " Highlight all lines having word under cursor (whole word match)
-inoremap <silent> <C-h><C-w> <C-o>:call <SID>Highlight("w")<CR>
+inoremap <silent> <C-h><C-l> <C-o>:call <SID>Highlight("l") \| nohls<CR>
+" Highlight word under cursor (partial word match)
+inoremap <silent> <C-h><C-f> <C-o>:call <SID>Highlight("f") \| nohls<CR>
 " Highlight all lines having word under cursor (partial word match)
-inoremap <silent> <C-h><C-f> <C-o>:call <SID>Highlight("f")<CR>
+inoremap <silent> <C-h><C-k> <C-o>:call <SID>Highlight("k") \| nohls<CR>
 " Highlight last search pattern
-inoremap <silent> <C-h><C-s> <C-o>:call <SID>Highlight("s")<CR>
+inoremap <silent> <C-h><C-s> <C-o>:call <SID>Highlight("s") \| nohls<CR>
 " Clear last pattern highlight
 inoremap <silent> <C-h><C-d> <C-o>:call <SID>Highlight("d")<CR>
 
@@ -111,6 +121,7 @@ function! <SID>Highlight(mode)
    " Line mode
    if a:mode == 'h'
       let match_pat = '.*\%'.line(".").'l.*'
+      "echo 'syn match '. s:lcolor_grp . s:lcolor_n . ' "' . match_pat . '" containedin=ALL'
       exec 'syn match '. s:lcolor_grp . s:lcolor_n . ' "' . match_pat . '" containedin=ALL'
    elseif a:mode == 'a'
       let s:lcolor_n = s:lcolor_n == s:lcolor_max - 1 ? 0 : s:lcolor_n + 1
@@ -131,6 +142,12 @@ function! <SID>Highlight(mode)
    elseif a:mode == 'w'
       let s:pcolor_n = s:pcolor_n == s:pcolor_max - 1 ?  1 : s:pcolor_n + 1
       exec 'syn match ' . s:pcolor_grp . s:pcolor_n . ' "\<' . cur_word . '\>" containedin=ALL'
+   elseif a:mode == 'k'
+      let s:pcolor_n = s:pcolor_n == s:pcolor_max - 1 ?  1 : s:pcolor_n + 1
+      exec 'syn match ' . s:pcolor_grp . s:pcolor_n . ' ".*' . cur_word . '.*" containedin=ALL'
+   elseif a:mode == 'l'
+      let s:pcolor_n = s:pcolor_n == s:pcolor_max - 1 ?  1 : s:pcolor_n + 1
+      exec 'syn match ' . s:pcolor_grp . s:pcolor_n . ' ".*\<' . cur_word . '\>.*" containedin=ALL'
    elseif a:mode == 'd'
       exec 'syn clear ' . s:pcolor_grp . s:pcolor_n
       let s:pcolor_n = s:pcolor_n == 0 ? 0 : s:pcolor_n - 1
