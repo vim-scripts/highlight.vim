@@ -1,7 +1,7 @@
 " File: highlight.vim
 " Author: Amit Sethi <amitrajsethi@yahoo.com>
-" Version: 1.4
-" Last Modified: Wed Dec  3 12:57:57 IST 2008
+" Version: 1.5
+" Last Modified: Wed Sep  8 14:16:43 IST 2010
 " Description: Highlight lines or patterns of interest in different colors
 " Uasge:
 "   Line mode
@@ -15,6 +15,7 @@
 "     <C-h><C-f>   Highlight word under cursor (partial word match)
 "     <C-h><C-k>   Highlight all lines having word under cursor (partial word match)
 "     <C-h><C-s>   Highlight last search pattern
+"     <C-h><C-j>   Highlight all lines having last search pattern
 "     <C-h><C-d>   Clear last pattern highlight
 "
 "     <C-h><C-n>   Clear all highlights
@@ -65,6 +66,8 @@ noremap  <silent> <C-h><C-f> :call <SID>Highlight("f") \| nohls<CR>
 noremap  <silent> <C-h><C-k> :call <SID>Highlight("k") \| nohls<CR>
 " Highlight last search pattern
 noremap  <silent> <C-h><C-s> :call <SID>Highlight("s") \| nohls<CR>
+" Highlight all lines having last search pattern
+noremap  <silent> <C-h><C-j> :call <SID>Highlight("j") \| nohls<CR>
 " Clear last pattern highlight
 noremap  <silent> <C-h><C-d> :call <SID>Highlight("d")<CR>
 
@@ -91,6 +94,8 @@ inoremap <silent> <C-h><C-f> <C-o>:call <SID>Highlight("f") \| nohls<CR>
 inoremap <silent> <C-h><C-k> <C-o>:call <SID>Highlight("k") \| nohls<CR>
 " Highlight last search pattern
 inoremap <silent> <C-h><C-s> <C-o>:call <SID>Highlight("s") \| nohls<CR>
+" Highlight all lines having last search pattern
+inoremap <silent> <C-h><C-j> <C-o>:call <SID>Highlight("j") \| nohls<CR>
 " Clear last pattern highlight
 inoremap <silent> <C-h><C-d> <C-o>:call <SID>Highlight("d")<CR>
 
@@ -131,7 +136,7 @@ function! <SID>Highlight(mode)
    else
    endif
 
-   let cur_word = a:mode == 's' ? @/ : expand("<cword>")
+   let cur_word = a:mode == 's' || a:mode == 'j' ? @/ : expand("<cword>")
 
    " Pattern mode
    if cur_word == ""
@@ -142,7 +147,7 @@ function! <SID>Highlight(mode)
    elseif a:mode == 'w'
       let s:pcolor_n = s:pcolor_n == s:pcolor_max - 1 ?  1 : s:pcolor_n + 1
       exec 'syn match ' . s:pcolor_grp . s:pcolor_n . ' "\<' . cur_word . '\>" containedin=ALL'
-   elseif a:mode == 'k'
+   elseif a:mode == 'k' || a:mode == 'j'
       let s:pcolor_n = s:pcolor_n == s:pcolor_max - 1 ?  1 : s:pcolor_n + 1
       exec 'syn match ' . s:pcolor_grp . s:pcolor_n . ' ".*' . cur_word . '.*" containedin=ALL'
    elseif a:mode == 'l'
