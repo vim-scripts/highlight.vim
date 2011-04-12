@@ -1,7 +1,7 @@
 " File: highlight.vim
 " Author: Amit Sethi <amitrajsethi@yahoo.com>
-" Version: 1.5
-" Last Modified: Wed Sep  8 14:16:43 IST 2010
+" Version: 1.6
+" Last Modified: Tue Apr 12 15:18:16 IST 2011
 " Description: Highlight lines or patterns of interest in different colors
 " Uasge:
 "   Line mode
@@ -39,6 +39,12 @@
 "   line starts with a keyword, then sometimes that keyword is not highlighted,
 "   while the rest of the line is hightlighted normally.
 "
+"
+" Acknowledgement:
+"   Thanks to Min Kyu Jeong (mkjeong@gmail.com) for contributions to make this
+"   script work in Console mode (Ver 1.6)
+"
+
 
 if exists("loaded_highlight") 
    finish
@@ -112,6 +118,14 @@ if !exists('g:lcolor_fg')
    let g:lcolor_fg = "white,white,black,black,black,black,white,white"
 endif
 
+if !exists('g:lcolor_bg_cterm')
+   let g:lcolor_bg_cterm = "Blue,Green,Cyan,Red,Yellow,Magenta,Brown,LightGray"
+endif
+
+if !exists('g:lcolor_fg_cterm')
+   let g:lcolor_fg_cterm = "White,White,White,White,White,White,Black,Black"
+endif
+
 " Define colors for Pattern highlight
 if !exists('g:pcolor_bg')
    let g:pcolor_bg = "yellow,blue,green,magenta,cyan,brown,orange,red"
@@ -120,6 +134,15 @@ endif
 if !exists('g:pcolor_fg')
    let g:pcolor_fg = "black,white,black,white,black,white,black,white"
 endif
+
+if !exists('g:pcolor_bg_cterm')
+   let g:pcolor_bg_cterm = "DarkBlue,DarkGreen,DarkCyan,DarkRed,Yellow,Magenta,Brown,LightGray"
+endif
+
+if !exists('g:pcolor_fg_cterm')
+   let g:pcolor_fg_cterm = "White,Black,White,White,White,White,Black,Black"
+endif
+
 
 " Highlight: Highlight line or pattern 
 function! <SID>Highlight(mode)
@@ -227,9 +250,12 @@ function! s:HighlightInitL()
    while ci < s:lcolor_max
       let bgColor = s:Strntok(g:lcolor_bg, ',', ci + 1)
       let fgColor = s:Strntok(g:lcolor_fg, ',', ci + 1)
+      let bgColor_cterm = s:Strntok(g:lcolor_bg_cterm, ',', ci + 1)
+      let fgColor_cterm = s:Strntok(g:lcolor_fg_cterm, ',', ci + 1)
      
       exec 'hi ' . s:lcolor_grp . ci .
          \ ' guifg =' . fgColor . ' guibg=' . bgColor
+         \ ' ctermfg =' . fgColor_cterm . ' ctermbg=' . bgColor_cterm
      
       let ci = ci + 1
    endw
@@ -248,9 +274,12 @@ function! s:HighlightInitP()
    while ci < s:pcolor_max
       let bgColor = s:Strntok(g:pcolor_bg, ',', ci + 1)
       let fgColor = s:Strntok(g:pcolor_fg, ',', ci + 1)
+      let bgColor_cterm = s:Strntok(g:pcolor_bg_cterm, ',', ci + 1)
+      let fgColor_cterm = s:Strntok(g:pcolor_fg_cterm, ',', ci + 1)
      
       exec 'hi ' . s:pcolor_grp . ci .
          \ ' guifg =' . fgColor . ' guibg=' . bgColor
+         \ ' ctermfg =' . fgColor_cterm . ' ctermbg=' . bgColor_cterm
      
       let ci = ci + 1
    endw
